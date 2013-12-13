@@ -1,0 +1,17 @@
+#!/bin/bash 
+
+function start_node() {
+  ZOOID=$1
+
+  PID=`docker run -d bdecamp/zookeeper:3.4.5 start-foreground zoo$ZOOID.cfg`
+
+  ZOOIP=`docker inspect $PID | grep IPAddress | cut -d '"' -f 4`
+
+  sed "s/[0-9\.]*\szoo$ZOOID/$ZOOIP\tzoo$ZOOID/g" /etc/hosts > /tmp/hosts
+  mv /tmp/hosts /etc/hosts
+}
+
+start_node 01
+start_node 02
+start_node 03
+
